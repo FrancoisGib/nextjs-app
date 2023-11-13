@@ -1,0 +1,1 @@
+A small Next.js project, i'm working on a connection system with some features (i don't know which ones for now but it will come) with Prisma on a postgresql database. This is just the beginning of the project for now.
