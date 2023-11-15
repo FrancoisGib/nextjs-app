@@ -1,15 +1,18 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+import "./globals.css"
+import { Inter } from "next/font/google";
 
-export default function Layout(props: {
-  children: React.ReactNode
-  analytics: React.ReactNode
-  team: React.ReactNode
+const inter = Inter({ subsets: ["latin"] });
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
 }) {
   return (
-    <>
-      {props.children}
-    </>
-  )
+    <html lang="en">
+      <body>
+          <main>{children}</main>
+      </body>
+    </html>
+  );
 }

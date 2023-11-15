@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
  
-export function authMiddleware(request: NextRequest) {
+/*export function authMiddleware(request: NextRequest) {
     const isAuth = cookies().has("auth");
     const path = request.nextUrl.pathname;
     if (!isAuth) {
@@ -18,13 +18,28 @@ export function authMiddleware(request: NextRequest) {
         else
             return {redirect: false, request: request}
     }
+}*/
+
+
+export function authMiddleware(request: NextRequest) {
+    const isAuth = cookies().has("auth");
+    const authConfig = isAuth ? config.isAuth : config.isNotAuth;
+    const path = request.nextUrl.pathname;
+    if (!path.match(authConfig.agree) || path.match(authConfig.except)) {
+        return {redirect: true, request: NextResponse.redirect(new URL(authConfig.redirect, request.url))};
+    }
+    return {redirect: false, request: request};
 }
 
 const config = {
     isAuth: {
-        except: ["/login", "/sign-up"]
+        agree: "/[a-z]*/?",
+        except: "(\/login|\/sign-up)$",
+        redirect: "/"
     },
     isNotAuth: {
-        agree: ["/login", "/sign-up", "/test"],
+        agree: "(\/login|\/sign-up)$",
+        except: "\/dashboard",
+        redirect: "/login"
     }
 }
