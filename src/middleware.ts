@@ -4,12 +4,12 @@ import { authMiddleware } from './middlewares/authMiddleware'
 export function middleware(request: NextRequest) {
     let i = 0;
     while (i < middlewares.length) {
-        const middleware = middlewares[i];
-        if (request.nextUrl.pathname === middleware.config) {
-            return middleware.middleware(request);
-        }
+        const res = middlewares[i](request);
+        if (res.redirect)
+            return res.request;
         i++;
-    }    
+    }
+    return NextResponse.next();
 }
 
 export const config = {
@@ -25,14 +25,9 @@ export const config = {
     ],
 }
 
-type Middleware = {
-    middleware: (request: NextRequest) => NextResponse<unknown>,
-    config: string
-}
+type Middleware = (request: NextRequest) => {redirect: boolean, request: NextRequest | NextResponse<unknown>}
+    
 
 const middlewares: Middleware[] = [
-    {
-        middleware: authMiddleware,
-        config: "/"
-    }
+    authMiddleware
 ];
