@@ -13,18 +13,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const formData: User = req.body;
-  try {
-    await prisma.user.create({ data: formData })
-  } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
+  await prisma.user.create({ data: formData }).catch(error => {
+    if (error instanceof PrismaClientKnownRequestError) {
       // The .code property can be accessed in a type-safe manner
-      if (e.code === 'P2002') {
+      if (error.code === 'P2002') {
         console.log(
           'There is a unique constraint violation, a new user cannot be created with this email'
         )
       }
     }
-    res.status(404).json({error: "error"})
-  }
-  res.status(201).json({name: formData.name, email: formData});
+    res.status(404).json({ error: "error" })
+  })
+  res.status(201).json({ name: formData.name, email: formData });
 }

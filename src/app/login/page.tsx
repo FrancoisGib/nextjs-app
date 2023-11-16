@@ -6,12 +6,16 @@ import { redirect } from "next/navigation";
 export default function LoginPage() {
     async function login(formData: FormData) {
         'use server'
-        const res = await fetch(`http://localhost:3000/api/user/login`);
-        const msg = await res.json();
-        console.log(msg);
-        cookies().set("auth", "ok");
-        revalidatePath("/");
-        redirect("/");
+        console.log(formData.values());
+        const email = formData.get("email");
+        const password = formData.get("password");
+        const res = await fetch(`http://localhost:3000/api/user/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: password }) });
+        const user = await res.json();
+        if (!user.error) {
+            cookies().set("auth", JSON.stringify(user), {sameSite: "strict"});
+            revalidatePath("/");
+            redirect("/");
+        }
     }
 
     return (
@@ -25,6 +29,8 @@ export default function LoginPage() {
                             Email
                         </label>
                         <input
+                            name="email"
+                            placeholder="Email"
                             type="email"
                             id="email"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -35,6 +41,7 @@ export default function LoginPage() {
                             Password
                         </label>
                         <input
+                            name="password"
                             type="password"
                             id="password"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
