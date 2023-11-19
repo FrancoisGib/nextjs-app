@@ -1,3 +1,5 @@
+import { getJwtSecretKey } from "@/lib/auth";
+import { SignJWT } from "jose";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -12,9 +14,11 @@ export default function LoginPage() {
         const res = await fetch(`http://localhost:3000/api/user/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: password }) });
         const user = await res.json();
         if (!user.error) {
-            cookies().set("auth", JSON.stringify(user), {sameSite: "strict"});
+            const key = getJwtSecretKey();
+            const token = await new SignJWT({id: user.id}).setProtectedHeader({ alg: "HS256" }).sign(key);
+            cookies().set("token", token, { sameSite: true });
             revalidatePath("/");
-            redirect("/");
+            redirect("/dashboard");
         }
     }
 

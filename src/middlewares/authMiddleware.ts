@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { jwtVerify } from 'jose';
+import { getJwtSecretKey } from '@/lib/auth';
+import { getUserById } from '@/db/user';
  
 /*export function authMiddleware(request: NextRequest) {
     const isAuth = cookies().has("auth");
@@ -22,20 +25,25 @@ import { cookies } from 'next/headers'
 
 
 export function authMiddleware(request: NextRequest) {
-    const isAuth = cookies().has("auth");
+    const token = cookies().get("token")?.value;
+    let isAuth = false;
+    let id = "";
+    if (token)
+        isAuth = true;
     const authConfig = isAuth ? config.isAuth : config.isNotAuth;
     const path = request.nextUrl.pathname;
     if (!path.match(authConfig.agree) || path.match(authConfig.except)) {
-        return {redirect: true, request: NextResponse.redirect(new URL(authConfig.redirect, request.url))};
+        return {redirect: true, request: NextResponse.redirect(new URL(`${authConfig.redirect}/${id}`, request.url))};
     }
     return {redirect: false, request: request};
 }
 
+
 const config = {
     isAuth: {
-        agree: "/[a-z]*/?",
+        agree: "/[a-z]*[0-9]*/?",
         except: "(\/login|\/sign-up)$",
-        redirect: "/"
+        redirect: "/dashboard"
     },
     isNotAuth: {
         agree: "(\/login|\/sign-up)$",

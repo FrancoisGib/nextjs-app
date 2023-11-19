@@ -1,4 +1,4 @@
-import prisma from '@/db/db'
+import prisma from '@/db/db';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { NextApiRequest, NextApiResponse } from 'next'
 

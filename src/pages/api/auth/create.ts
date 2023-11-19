@@ -18,9 +18,7 @@ export default async function handler(
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {
       if (e.code === 'P2002') {
-        console.log(
-          'There is a unique constraint violation, a new user cannot be created with this email'
-        )
+        console.log("A user already exists with that email")
       }
     }
     res.status(404).json({error: "error"})
