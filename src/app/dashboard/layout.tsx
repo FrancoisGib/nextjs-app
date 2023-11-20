@@ -1,3 +1,4 @@
+import Header from "@/components/header";
 import SignOutButton from "@/components/signOutButton";
 
 export default function Layout({
@@ -5,10 +6,11 @@ export default function Layout({
 }: {
   children: React.ReactNode;
 }) {
-    return (
-        <>
-            <SignOutButton />
-            {children}
-        </>
-    )
+  return (
+    <>
+      <Header />
+      <SignOutButton />
+      {children}
+    </>
+  )
 }

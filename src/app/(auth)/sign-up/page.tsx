@@ -1,3 +1,4 @@
+import RedirectButton from "@/components/redirectButton";
 import { revalidateTag } from "next/cache";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,7 +21,7 @@ export default function SignupPage() {
 
     return (
         <>
-            <Link href="/login" className="mt-5 mr-8 absolute right-0 hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Login</Link>
+            <RedirectButton title="Login" redirect="/login" />
             <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
                 <form action={submit} className="mt-8 space-y-6">
                     <div>

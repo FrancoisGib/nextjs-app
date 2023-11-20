@@ -1,11 +1,10 @@
 import prisma from "./db";
 
 export const getUsers = async () => {
-    await prisma.user.findMany({
+    return await prisma.user.findMany({
         select: {
             email: true,
             name: true,
-            password: true,
         },
     });
 }

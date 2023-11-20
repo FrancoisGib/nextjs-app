@@ -1,7 +1,7 @@
+import RedirectButton from "@/components/redirectButton";
 import { compare, getJwtSecretKey } from "@/lib/auth";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default function LoginPage({searchParams}: {searchParams? : {error? : string}}) {
@@ -21,13 +21,13 @@ export default function LoginPage({searchParams}: {searchParams? : {error? : str
             const key = getJwtSecretKey();
             const token = await new SignJWT({ id: user.id }).setProtectedHeader({ alg: "HS256" }).sign(key);
             cookies().set("token", token, { sameSite: true });
-            redirect("/dashboard");
+            redirect("/");
         }
     }
 
     return (
         <>
-            <Link href="/sign-up" className="mt-5 mr-8 absolute right-0 hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Sign up</Link>
+            <RedirectButton title="Sign up" redirect="/sign-up" />
             <div className="flex justify-center items-center h-screen">
                 <form className="w-[300px] p-4 bg-white shadow-md rounded-md" action={login}>
                     <h2 className="text-2xl font-bold mb-4">Log In</h2>

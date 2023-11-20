@@ -42,9 +42,10 @@ export async function compare(email: string, password: string) {
 
 export async function getAuth() {
   const token = cookies().get("token");
-  
-  if (!token)
-    return null;
-  const res = await jwtVerify(token.value, getJwtSecretKey());
-  return await getUserById(Number(res.payload.id));
+  if (!token?.value)
+    return;
+  else {
+    const res = await jwtVerify(token.value, getJwtSecretKey());
+    return await getUserById(Number(res.payload.id));
+  }
 }
