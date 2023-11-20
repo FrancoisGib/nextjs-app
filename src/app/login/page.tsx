@@ -1,23 +1,26 @@
-import { getJwtSecretKey } from "@/lib/auth";
+import { compare, getJwtSecretKey } from "@/lib/auth";
 import { SignJWT } from "jose";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default function LoginPage({searchParams}: {searchParams? : {error? : string}}) {
+
+    const error = searchParams?.error ? "Invalid entries" : null
+
     async function login(formData: FormData) {
         'use server'
-        console.log(formData.values());
-        const email = formData.get("email");
-        const password = formData.get("password");
+        const email = formData.get("email")?.toString();
+        const password = formData.get("password")?.toString();
+        const passwordChecked = await compare(email!, password!);
+        if (!passwordChecked)
+            redirect("/login?error=1");
         const res = await fetch(`http://localhost:3000/api/user/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: password }) });
         const user = await res.json();
         if (!user.error) {
             const key = getJwtSecretKey();
-            const token = await new SignJWT({id: user.id}).setProtectedHeader({ alg: "HS256" }).sign(key);
+            const token = await new SignJWT({ id: user.id }).setProtectedHeader({ alg: "HS256" }).sign(key);
             cookies().set("token", token, { sameSite: true });
-            revalidatePath("/");
             redirect("/dashboard");
         }
     }
@@ -51,6 +54,7 @@ export default function LoginPage() {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
+                    {error}
                     <button
                         type="submit"
                         className="w-full py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none"

@@ -12,7 +12,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const formData: Auth = req.body;
   try {
     await prisma.auth.create({ data: {userId: req.body.id, token:" fdsf"} })
   } catch (e) {
